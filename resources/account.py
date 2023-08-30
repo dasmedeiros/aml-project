@@ -20,10 +20,14 @@ class AccountsForCustomer(MethodView):
         return accounts
 
     #Creates an account
-    @jwt_required(fresh=True)    
+    @jwt_required(refresh=True)    
     @blp.arguments(AccountSchema)
     @blp.response(201, AccountSchema)
     def post(self, account_data):
+        jwt = get_jwt()
+        if not jwt.get("is_admin"):
+            abort(401, message="Admin privilege required.")
+        
         account = AccountModel(**account_data)
 
         try:
@@ -40,6 +44,10 @@ class Account(MethodView):
     @jwt_required(refresh=True)
     @blp.response(201, AccountSchema)
     def post(self, customer_id, account_id):
+        jwt = get_jwt()
+        if not jwt.get("is_admin"):
+            abort(401, message="Admin privilege required.")
+        
         customer = CustomerModel.query.get_or_404(customer_id)
         account = AccountModel.query.get_or_404(account_id)
 

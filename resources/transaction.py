@@ -27,7 +27,7 @@ blp = Blueprint("Transaction", __name__, description="Operations on transaction"
 
 @blp.route("/transaction")
 class Transaction(MethodView):
-    @jwt_required()
+    @jwt_required(refresh=True)
     @blp.arguments(TransactionSchema)
     @blp.response(201, TransactionSchema)
     def post(self, transaction_data):
