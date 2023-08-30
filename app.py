@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 from db import db
 import models
+from models import BlocklistModel
 
 from resources.account import blp as AccountsBlueprint
 from resources.customer import blp as CustomersBlueprint
