@@ -37,7 +37,7 @@ class AccountsForCustomer(MethodView):
 @blp.route("/customer/<string:customer_id>/account/<string:account_id>")
 class Account(MethodView):
     #Links an account to a specific customer
-    @jwt_required(fresh=True)
+    @jwt_required(refresh=True)
     @blp.response(201, AccountSchema)
     def post(self, customer_id, account_id):
         customer = CustomerModel.query.get_or_404(customer_id)
@@ -82,7 +82,7 @@ class Account(MethodView):
         return account
     
     #Update a specific account for a specific customer
-    @jwt_required(fresh=True)
+    @jwt_required(refresh=True)
     @blp.arguments(AccountUpdateSchema)
     @blp.response(200, AccountSchema)
     def put(self, account_data, account_id):
