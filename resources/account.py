@@ -12,7 +12,7 @@ blp = Blueprint("Accounts", __name__, description="Operations on customer accoun
 @blp.route("/customer/<string:customer_id>/account")
 class AccountsForCustomer(MethodView):
     #Gets every account for a specific customer
-    @jwt_required()
+    @jwt_required(refresh=True)
     @blp.response(200, AccountSchema(many=True))
     def get(self, customer_id):
         accounts = AccountModel.query.filter_by(customer_id=customer_id).all_or_404()
@@ -20,7 +20,7 @@ class AccountsForCustomer(MethodView):
         return accounts
 
     #Creates an account
-    @jwt_required()    
+    @jwt_required(fresh=True)    
     @blp.arguments(AccountSchema)
     @blp.response(201, AccountSchema)
     def post(self, account_data):
@@ -37,7 +37,7 @@ class AccountsForCustomer(MethodView):
 @blp.route("/customer/<string:customer_id>/account/<string:account_id>")
 class Account(MethodView):
     #Links an account to a specific customer
-    @jwt_required()
+    @jwt_required(fresh=True)
     @blp.response(201, AccountSchema)
     def post(self, customer_id, account_id):
         customer = CustomerModel.query.get_or_404(customer_id)
@@ -54,7 +54,7 @@ class Account(MethodView):
         return account
 
     #Get a specific account for a specific customer
-    @jwt_required()
+    @jwt_required(refresh=True)
     @blp.response(200, AccountSchema)
     def get(self, account_id):
         account = AccountModel.query.get_or_404(account_id)
@@ -62,7 +62,7 @@ class Account(MethodView):
         return account
 
     #Delete a specific account for a specific customer
-    @jwt_required()
+    @jwt_required(fresh=True)
     @blp.response(202, description="Deletes an account if no customer is associated with it.", example={"Message": "Account deleted."})
     @blp.alt_response(404, description="Account not found.")
     @blp.alt_response(400, description="Returned if the account is assigned to a customer. In this case, the account is not deleted.")
@@ -82,7 +82,7 @@ class Account(MethodView):
         return account
     
     #Update a specific account for a specific customer
-    @jwt_required()
+    @jwt_required(fresh=True)
     @blp.arguments(AccountUpdateSchema)
     @blp.response(200, AccountSchema)
     def put(self, account_data, account_id):
@@ -104,7 +104,7 @@ class Account(MethodView):
 #Retrieve every account in the database
 @blp.route("/accounts")
 class AccountsList(MethodView):
-    @jwt_required()
+    @jwt_required(refresh=True)
     @blp.response(200, AccountSchema(many=True))
     def get(self):
         return AccountModel.query.all()
