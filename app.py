@@ -8,7 +8,6 @@ from flask_migrate import Migrate
 from dotenv import load_dotenv
 
 from db import db
-from blocklist import BLOCKLIST
 import models
 
 from resources.account import blp as AccountsBlueprint
@@ -40,7 +39,9 @@ def create_app(db_url=None):
 
     @jwt.token_in_blocklist_loader
     def check_if_token_in_blocklist(jwt_header, jwt_payload):
-        return jwt_payload["jti"] in BLOCKLIST
+        jti = jwt_payload["jti"]
+        blocked_token = db.session.query(BlocklistModel).filter_by(jti=jti).first()
+        return blocked_token is not None
 
     @jwt.revoked_token_loader
     def revoked_token_callback(jwt_header, jwt_payload):
@@ -68,9 +69,6 @@ def create_app(db_url=None):
     @jwt.unauthorized_loader
     def missing_token_callback(error):
         return(jsonify({"message": "Request does not contain an access token.", "error": "authorization_required"}), 401)
-
-    # with app.app_context():
-    #     db.create_all()
 
     api.register_blueprint(AccountsBlueprint)
     api.register_blueprint(CustomersBlueprint)

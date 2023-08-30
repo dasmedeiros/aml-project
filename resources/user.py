@@ -45,10 +45,12 @@ class TokenRefresh(MethodView):
     def post(self):
         current_user = get_jwt_identity()
         new_token = create_access_token(identity=current_user, fresh=False)
+
         jti = get_jwt()["jti"]
-        revoked_token = BlocklistModel(jti=jti)
-        db.session.add(revoked_token)
+        blocked_token = BlocklistModel(jti=jti)
+        db.session.add(blocked_token)
         db.session.commit()
+
         return {"access_token": new_token}
 
 
@@ -59,9 +61,10 @@ class UserLogout(MethodView):
         jti = get_jwt()["jti"]
 
         # Create a new instance of RevokedToken and add it to the database
-        revoked_token = BlocklistModel(jti=jti)
-        db.session.add(revoked_token)
+        blocked_token = BlocklistModel(jti=jti)
+        db.session.add(blocked_token)
         db.session.commit()
+
         return {"message": "Successfully logged out."}
 
 @blp.route("/user/<int:user_id>")
