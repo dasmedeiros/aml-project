@@ -4,7 +4,7 @@ class TransactionModel(db.Model):
     __tablename__ = 'transactions'
 
     # Transaction details
-    id = db.Column(db.String(50), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.String(20), nullable=False)
     card_present_flag = db.Column(db.Integer, nullable=False)
@@ -16,11 +16,11 @@ class TransactionModel(db.Model):
     currency = db.Column(db.String(3), nullable=False)
     movement = db.Column(db.String(10), nullable=False)
     # Merchant Details
-    merchant_id = db.Column(db.String(50), db.ForeignKey("merchants.id"), unique=False, nullable=False)
+    merchant_id = db.Column(db.Integer, db.ForeignKey("merchants.id"), unique=False, nullable=False)
     # Customer details
-    customer_id = db.Column(db.String(50), db.ForeignKey("customers.id"), unique=False, nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"), unique=False, nullable=False)
     # Account details
-    account_id = db.Column(db.String(50), db.ForeignKey("accounts.id"), unique=False, nullable=False)
+    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), unique=False, nullable=False)
     # Relationships
     merchants = db.relationship("MerchantModel", back_populates="transactions")
     customers = db.relationship("CustomerModel", back_populates="transactions")

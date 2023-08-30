@@ -3,7 +3,7 @@ from db import db
 class CustomerModel(db.Model):
     __tablename__ = "customers"
 
-    id = db.Column(db.String(50), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(80), unique=False, nullable=False)
     last_name = db.Column(db.String(80), unique=False, nullable=False)
     gender = db.Column(db.String(1), unique=False, nullable=False)
