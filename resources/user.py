@@ -4,7 +4,7 @@ from passlib.hash import pbkdf2_sha256
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required, get_jwt
 
 from db import db
-from models import UserModel
+from models import UserModel, BlocklistModel
 from schemas import UserSchema
 
 blp = Blueprint("Users", __name__, description="Operations on users")
@@ -46,7 +46,9 @@ class TokenRefresh(MethodView):
         current_user = get_jwt_identity()
         new_token = create_access_token(identity=current_user, fresh=False)
         jti = get_jwt()["jti"]
-        BLOCKLIST.add(jti)
+        revoked_token = BlocklistModel(jti=jti)
+        db.session.add(revoked_token)
+        db.session.commit()
         return {"access_token": new_token}
 
 
@@ -55,7 +57,11 @@ class UserLogout(MethodView):
     @jwt_required()
     def post(self):
         jti = get_jwt()["jti"]
-        BLOCKLIST.add(jti)
+
+        # Create a new instance of RevokedToken and add it to the database
+        revoked_token = BlocklistModel(jti=jti)
+        db.session.add(revoked_token)
+        db.session.commit()
         return {"message": "Successfully logged out."}
 
 @blp.route("/user/<int:user_id>")
