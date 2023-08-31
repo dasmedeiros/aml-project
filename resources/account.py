@@ -42,22 +42,22 @@ class AccountsForCustomer(MethodView):
         
         return account
 
-@blp.route("/customer/<int:customer_id>/account")
-class Account(MethodView):
+@blp.route("/account/<int:account_id>/customer")
+class AccountCustomer(MethodView):
     #Links an account to a specific customer
     @jwt_required(refresh=True)
     @blp.arguments(AccountUpdateSchema)
     @blp.response(201, AccountSchema)
-    def post(self, customer_id):
+    def post(self, account_id):
         jwt = get_jwt()
         if not jwt.get("is_admin"):
             abort(401, message="Admin privilege required.")
         
-        customer = CustomerModel.query.get_or_404(customer_id)
-
-        # Extract account_id from the request context
-        account_id = request.view_args.get("account_id")
         account = AccountModel.query.get_or_404(account_id)
+
+        # Extract customer_id from the request context
+        customer_id = int(request.args.get("id"))
+        customer = CustomerModel.query.get_or_404(customer_id)
 
         customer.accounts.append(account)
 
@@ -68,8 +68,10 @@ class Account(MethodView):
             abort(500, message="An error ocurred while inserting the account.")
 
         return account
-
-    #Get a specific account for a specific customer
+    
+@blp.route("/account/<int:account_id>")
+class AccountCustomer(MethodView):
+    #Get a specific account
     @jwt_required(refresh=True)
     @blp.response(200, AccountSchema)
     def get(self, account_id):
@@ -77,7 +79,7 @@ class Account(MethodView):
         
         return account
 
-    #Delete a specific account for a specific customer
+    #Delete a specific account
     @jwt_required(fresh=True)
     @blp.response(202, description="Deletes an account if no customer is associated with it.", example={"Message": "Account deleted."})
     @blp.alt_response(404, description="Account not found.")
@@ -97,7 +99,7 @@ class Account(MethodView):
 
         return account
     
-    #Update a specific account for a specific customer
+    #Update a specific account
     @jwt_required(refresh=True)
     @blp.arguments(AccountUpdateSchema)
     @blp.response(200, AccountSchema)
