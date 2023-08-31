@@ -42,18 +42,21 @@ class AccountsForCustomer(MethodView):
         
         return account
 
-@blp.route("/customer/<int:customer_id>/account/<int:account_id>")
+@blp.route("/customer/<int:customer_id>/account")
 class Account(MethodView):
     #Links an account to a specific customer
     @jwt_required(refresh=True)
     @blp.arguments(AccountUpdateSchema)
     @blp.response(201, AccountSchema)
-    def post(self, customer_id, account_id):
+    def post(self, customer_id):
         jwt = get_jwt()
         if not jwt.get("is_admin"):
             abort(401, message="Admin privilege required.")
         
         customer = CustomerModel.query.get_or_404(customer_id)
+
+        # Extract account_id from the request context
+        account_id = request.view_args.get("account_id")
         account = AccountModel.query.get_or_404(account_id)
 
         customer.accounts.append(account)
