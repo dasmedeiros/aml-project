@@ -9,7 +9,7 @@ from schemas import AccountSchema, AccountUpdateSchema
 
 blp = Blueprint("Accounts", __name__, description="Operations on customer accounts")
 
-@blp.route("/customer/<string:customer_id>/accounts")
+@blp.route("/customer/<int:customer_id>/accounts")
 class AccountsForCustomer(MethodView):
     #Gets every account for a specific customer
     @jwt_required(refresh=True)
@@ -18,13 +18,32 @@ class AccountsForCustomer(MethodView):
         accounts = AccountModel.query.filter_by(customer_id=customer_id).all_or_404()
 
         return accounts
+    
+    #Creates an account
+    @jwt_required(refresh=True)    
+    @blp.arguments(AccountSchema)
+    @blp.response(201, AccountSchema)
+    def post(self, account_data, customer_id):
+        jwt = get_jwt()
+        if not jwt.get("is_admin"):
+            abort(401, message="Admin privilege required.")
+        
+        account = AccountModel(customer_id=customer_id, **account_data)
+
+        try:
+            db.session.add(account)
+            db.session.commit()
+        except SQLAlchemyError as e:
+            abort(500, message=str(e))
+        
+        return account
 
 @blp.route("/customer/<int:customer_id>/account/<int:account_id>")
 class Account(MethodView):
     #Links an account to a specific customer
     @jwt_required(refresh=True)
     @blp.response(201, AccountSchema)
-    def post(self, customer_id, account_id):
+    def put(self, customer_id, account_id):
         jwt = get_jwt()
         if not jwt.get("is_admin"):
             abort(401, message="Admin privilege required.")
@@ -97,22 +116,3 @@ class AccountsList(MethodView):
     @blp.response(200, AccountSchema(many=True))
     def get(self):
         return AccountModel.query.all()
-    
-    #Creates an account
-    @jwt_required(refresh=True)    
-    @blp.arguments(AccountSchema)
-    @blp.response(201, AccountSchema)
-    def post(self, account_data):
-        jwt = get_jwt()
-        if not jwt.get("is_admin"):
-            abort(401, message="Admin privilege required.")
-        
-        account = AccountModel(**account_data)
-
-        try:
-            db.session.add(account)
-            db.session.commit()
-        except SQLAlchemyError as e:
-            abort(500, message=str(e))
-        
-        return account
