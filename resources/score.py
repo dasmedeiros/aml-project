@@ -78,7 +78,7 @@ class ScoreTransaction(MethodView):
 
         if not scores:
             abort(404, message="This transaction has no associated score.")  # Return a 404 error response
-            
+
         for score in scores:
             db.session.delete(score)
         db.session.commit()
@@ -87,8 +87,8 @@ class ScoreTransaction(MethodView):
     @jwt_required(refresh=True)
     @blp.arguments(ScoreSchema)
     @blp.response(201, ScoreSchema)
-    def post(self, score_data):
-        score = ScoreModel(**score_data)
+    def post(self, score_data, transaction_id):
+        score = ScoreModel(id=transaction_id, **score_data)
 
         try:
             db.session.add(score)
