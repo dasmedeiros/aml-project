@@ -13,7 +13,7 @@ blp = Blueprint("Merchants", __name__, description="Operations on merchants")
 class Merchant(MethodView):
     @jwt_required(refresh=True)
     @blp.response(200, MerchantSchema)
-    def get(self, customer_id):
+    def get(self, merchant_id):
         merchant = MerchantModel.query.get_or_404(merchant_id)
 
         return merchant

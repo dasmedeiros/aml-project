@@ -50,7 +50,7 @@ class Score(MethodView):
 
         return score
 
-@blp.route("/score")
+@blp.route("/scores")
 class ScoreList(MethodView):
     @jwt_required(refresh=True)
     @blp.response(200, ScoreSchema(many=True))
@@ -62,7 +62,10 @@ class ScoreTransaction(MethodView):
     @jwt_required(refresh=True)
     @blp.response(200, ScoreSchema(many=True))
     def get(self, transaction_id):
-        scores = ScoreModel.query.filter_by(transaction_id=transaction_id).all_or_404()
+        scores = ScoreModel.query.filter_by(transaction_id=transaction_id).all()
+
+        if not scores:
+            abort(404, message="This transaction has no associated score.")  # Return a 404 error response
         return scores
 
     @jwt_required(fresh=True)
@@ -71,7 +74,11 @@ class ScoreTransaction(MethodView):
         if not jwt.get("is_admin"):
             abort(401, message="Admin privilege required.")
 
-        scores = ScoreModel.query.filter_by(transaction_id=transaction_id).all_or_404()
+        scores = ScoreModel.query.filter_by(transaction_id=transaction_id).all()
+
+        if not scores:
+            abort(404, message="This transaction has no associated score.")  # Return a 404 error response
+            
         for score in scores:
             db.session.delete(score)
         db.session.commit()
