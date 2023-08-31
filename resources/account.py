@@ -15,7 +15,11 @@ class AccountsForCustomer(MethodView):
     @jwt_required(refresh=True)
     @blp.response(200, AccountSchema(many=True))
     def get(self, customer_id):
-        accounts = AccountModel.query.filter_by(customer_id=customer_id).all_or_404()
+        accounts = AccountModel.query.filter_by(customer_id=customer_id).all()
+
+        # Check if the result list is empty
+        if not accounts:
+            abort(404, message="This user has no associated account.")  # Return a 404 error response
 
         return accounts
     

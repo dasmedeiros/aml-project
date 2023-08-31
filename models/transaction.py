@@ -14,7 +14,7 @@ class TransactionModel(db.Model):
     txn_description = db.Column(db.String(50), nullable=False)
     amount = db.Column(db.Float(precision=2), nullable=False)
     currency = db.Column(db.String(3), nullable=False)
-    movement = db.Column(db.String(10), nullable=False)
+    movement = db.Column(db.String(1), nullable=False)
     # Merchant Details
     merchant_id = db.Column(db.Integer, db.ForeignKey("merchants.id"), unique=False, nullable=False)
     # Customer details
