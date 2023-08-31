@@ -2,7 +2,7 @@ from marshmallow import Schema, fields
 
 #Plain schemas
 class PlainCustomerSchema(Schema):
-    id = fields.Str(dump_only=True)
+    id = fields.Int(dump_only=True)
     first_name = fields.Str(required=True)
     last_name = fields.Str(required=True)
     gender = fields.Str(required=True)
@@ -11,7 +11,7 @@ class PlainCustomerSchema(Schema):
     state = fields.Str(required=True)
 
 class PlainMerchantSchema(Schema):
-    id = fields.Str(dump_only=True)
+    id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
     industry = fields.Str(required=True)
     city = fields.Str(required=True)
@@ -20,14 +20,14 @@ class PlainMerchantSchema(Schema):
     lat = fields.Float(required=True)
 
 class PlainAccountSchema(Schema):
-    id = fields.Str(dump_only=True)
+    id = fields.Int(dump_only=True)
     currency = fields.Str(required=True)
     balance = fields.Float(required=True)
     movement = fields.Str(required=True)
-    customer_id = fields.Str(required=False)
+    customer_id = fields.Int(required=False)
 
 class PlainTransactionSchema(Schema):
-    id = fields.Str(dump_only=True)
+    id = fields.Int(dump_only=True)
     date = fields.DateTime(required=True)
     status = fields.Str(required=True)
     card_present_flag = fields.Int(required=True)
@@ -38,13 +38,12 @@ class PlainTransactionSchema(Schema):
     amount = fields.Float(required=True)
     currency = fields.Str(required=True)
     movement = fields.Str(required=True)
-    merchant_id = fields.Str(required=True)
-    customer_id = fields.Str(required=True)
-    account_id = fields.Str(required=True)
-    score_id = fields.Str(required=False)
+    merchant_id = fields.Int(required=True)
+    customer_id = fields.Int(required=True)
+    account_id = fields.Int(required=True)
 
 class PlainScoreSchema(Schema):
-    id = fields.Str(dump_only=True)
+    id = fields.Int(dump_only=True)
     score = fields.Float(required=False)
     datetime = fields.DateTime(required=False)
 
@@ -69,10 +68,10 @@ class AccountUpdateSchema(Schema):
     currency = fields.Str()
     balance = fields.Float()
     movement = fields.Str()
-    customer_id = fields.Str()
+    customer_id = fields.Int()
 
 class TransactionUpdateSchema(Schema):
-    score_id = fields.Str()
+    score_id = fields.Int()
 
 class ScoreUpdateSchema(Schema):
     score = fields.Float()
@@ -89,7 +88,7 @@ class MerchantSchema(PlainMerchantSchema):
     transactions = fields.List(fields.Nested(PlainTransactionSchema()), dump_only=True)
 
 class AccountSchema(PlainAccountSchema):
-    customer_id = fields.Str(required=True, load_only=True)
+    customer_id = fields.Int(required=True, load_only=True)
     customer = fields.List(fields.Nested(PlainCustomerSchema()), dump_only=True)
 
 class TransactionSchema(PlainTransactionSchema):
@@ -99,7 +98,7 @@ class TransactionSchema(PlainTransactionSchema):
     score = fields.List(fields.Nested(PlainScoreSchema()), dump_only=True)
 
 class ScoreSchema(PlainScoreSchema):
-    transaction_id = fields.Str(required=True, load_only=True)
+    transaction_id = fields.Int(required=True, load_only=True)
     transaction = fields.List(fields.Nested(PlainTransactionSchema()), dump_only=True)
 
 class UserSchema(Schema):
