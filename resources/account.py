@@ -19,25 +19,6 @@ class AccountsForCustomer(MethodView):
 
         return accounts
 
-    #Creates an account
-    @jwt_required(refresh=True)    
-    @blp.arguments(AccountSchema)
-    @blp.response(201, AccountSchema)
-    def post(self, account_data):
-        jwt = get_jwt()
-        if not jwt.get("is_admin"):
-            abort(401, message="Admin privilege required.")
-        
-        account = AccountModel(**account_data)
-
-        try:
-            db.session.add(account)
-            db.session.commit()
-        except SQLAlchemyError as e:
-            abort(500, message=str(e))
-        
-        return account
-
 @blp.route("/customer/<string:customer_id>/account/<string:account_id>")
 class Account(MethodView):
     #Links an account to a specific customer
@@ -116,3 +97,22 @@ class AccountsList(MethodView):
     @blp.response(200, AccountSchema(many=True))
     def get(self):
         return AccountModel.query.all()
+    
+    #Creates an account
+    @jwt_required(refresh=True)    
+    @blp.arguments(AccountSchema)
+    @blp.response(201, AccountSchema)
+    def post(self, account_data):
+        jwt = get_jwt()
+        if not jwt.get("is_admin"):
+            abort(401, message="Admin privilege required.")
+        
+        account = AccountModel(**account_data)
+
+        try:
+            db.session.add(account)
+            db.session.commit()
+        except SQLAlchemyError as e:
+            abort(500, message=str(e))
+        
+        return account
