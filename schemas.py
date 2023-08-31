@@ -88,7 +88,6 @@ class MerchantSchema(PlainMerchantSchema):
     transactions = fields.List(fields.Nested(PlainTransactionSchema()), dump_only=True)
 
 class AccountSchema(PlainAccountSchema):
-    customer_id = fields.Int(required=True, load_only=True)
     customer = fields.List(fields.Nested(PlainCustomerSchema()), dump_only=True)
 
 class TransactionSchema(PlainTransactionSchema):

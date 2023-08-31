@@ -46,7 +46,7 @@ class Customer(MethodView):
 
         return customer
 
-@blp.route("/customer")
+@blp.route("/customers")
 class CustomerList(MethodView):
     @jwt_required(refresh=True)
     @blp.response(200, CustomerSchema(many=True))

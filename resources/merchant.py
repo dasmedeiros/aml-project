@@ -46,7 +46,7 @@ class Merchant(MethodView):
 
         return merchant
 
-@blp.route("/merchant")
+@blp.route("/merchants")
 class MerchantList(MethodView):
     @jwt_required(refresh=True)
     @blp.response(200, MerchantSchema(many=True))

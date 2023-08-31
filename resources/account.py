@@ -9,7 +9,7 @@ from schemas import AccountSchema, AccountUpdateSchema
 
 blp = Blueprint("Accounts", __name__, description="Operations on customer accounts")
 
-@blp.route("/customer/<string:customer_id>/account")
+@blp.route("/customer/<string:customer_id>/accounts")
 class AccountsForCustomer(MethodView):
     #Gets every account for a specific customer
     @jwt_required(refresh=True)
