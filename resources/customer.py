@@ -9,7 +9,7 @@ from schemas import CustomerSchema, CustomerUpdateSchema
 
 blp = Blueprint("Customers", __name__, description="Operations on customers")
 
-@blp.route("/customer/<string:customer_id>")
+@blp.route("/customer/<int:customer_id>")
 class Customer(MethodView):
     @jwt_required(refresh=True)
     @blp.response(200, CustomerSchema)

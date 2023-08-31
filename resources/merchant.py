@@ -9,7 +9,7 @@ from schemas import MerchantSchema, MerchantUpdateSchema
 
 blp = Blueprint("Merchants", __name__, description="Operations on merchants")
 
-@blp.route("/merchant/<string:merchant_id>")
+@blp.route("/merchant/<int:merchant_id>")
 class Merchant(MethodView):
     @jwt_required(refresh=True)
     @blp.response(200, MerchantSchema)

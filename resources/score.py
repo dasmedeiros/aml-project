@@ -11,7 +11,7 @@ from schemas import ScoreSchema, ScoreUpdateSchema
 
 blp = Blueprint("Score", __name__, description="Operations on score")
 
-@blp.route("/score/<string:score_id>")
+@blp.route("/score/<int:score_id>")
 class Score(MethodView):
     @jwt_required(refresh=True)
     @blp.response(200, ScoreSchema)
@@ -57,7 +57,7 @@ class ScoreList(MethodView):
     def get(self):
         return ScoreModel.query.all()
 
-@blp.route("/score/t/<string:transaction_id>")
+@blp.route("/score/t/<int:transaction_id>")
 class ScoreTransaction(MethodView):
     @jwt_required(refresh=True)
     @blp.response(200, ScoreSchema(many=True))

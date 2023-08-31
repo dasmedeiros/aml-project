@@ -19,7 +19,7 @@ class AccountsForCustomer(MethodView):
 
         return accounts
 
-@blp.route("/customer/<string:customer_id>/account/<string:account_id>")
+@blp.route("/customer/<int:customer_id>/account/<int:account_id>")
 class Account(MethodView):
     #Links an account to a specific customer
     @jwt_required(refresh=True)
