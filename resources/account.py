@@ -46,8 +46,9 @@ class AccountsForCustomer(MethodView):
 class Account(MethodView):
     #Links an account to a specific customer
     @jwt_required(refresh=True)
+    @blp.arguments(AccountUpdateSchema)
     @blp.response(201, AccountSchema)
-    def put(self, customer_id, account_id):
+    def post(self, customer_id, account_id):
         jwt = get_jwt()
         if not jwt.get("is_admin"):
             abort(401, message="Admin privilege required.")
